@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>전주 맛집 - 토스 스타일</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #f2f4f6; color: #191f28; -webkit-tap-highlight-color: transparent; }
+        .toss-blue { color: #0064ff; }
+        .bg-toss-blue { background-color: #0064ff; }
+        
+        /* 숨김/보임 애니메이션 */
+        .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
+        .tab-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 바텀 시트 (모달) 스타일 */
+        .bottom-sheet-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); z-index: 50; display: none; opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .bottom-sheet {
+            position: fixed; bottom: -100%; left: 0; width: 100%;
+            background: white; border-top-left-radius: 24px; border-top-right-radius: 24px;
+            padding: 24px; z-index: 60; transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-width: 600px; margin: 0 auto; right: 0;
+        }
+        .bottom-sheet.open { bottom: 0; }
+        .bottom-sheet-backdrop.open { display: block; opacity: 1; }
+
+        .card-press:active { transform: scale(0.98); transition: 0.1s; background-color: #f9fafb; }
+    </style>
+</head>
+<body class="max-w-md mx-auto min-h-screen relative pb-24">
+
+    <header class="pt-12 px-6 pb-6 bg-white sticky top-0 z-10 shadow-sm">
+        <h1 class="text-2xl font-bold">
+            가족과 함께하는<br>
+            <span class="toss-blue">전주 미식 여행</span>
+        </h1>
+        <div class="flex mt-6 space-x-2">
+            <button onclick="switchTab('noodle')" id="btn-noodle" class="px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 transition-colors bg-toss-blue text-white">🍜 면요리</button>
+            <button onclick="switchTab('snack')" id="btn-snack" class="px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 transition-colors">🌭 간식</button>
+            <button onclick="switchTab('tip')" id="btn-tip" class="px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 transition-colors">💡 꿀팁</button>
+        </div>
+    </header>
+
+    <main class="p-4">
+        
+        <div id="tab-noodle" class="tab-content active">
+            <div class="text-sm text-gray-500 mb-2 font-medium px-2">아이들도 잘 먹는 베스트</div>
+            
+            <div class="bg-white rounded-3xl p-5 mb-3 shadow-sm card-press cursor-pointer" onclick="openSheet('veteran')">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md font-bold">인기 1위</span>
+                        <h3 class="text-lg font-bold mt-2">베테랑 칼국수</h3>
+                        <p class="text-gray-400 text-sm mt-1">고소한 들깨가루와 계란 듬뿍</p>
+                    </div>
+                    <span class="text-2xl">🍜</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 mb-3 shadow-sm card-press cursor-pointer" onclick="openSheet('jinmi')">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-bold">현지인 추천</span>
+                        <h3 class="text-lg font-bold mt-2">진미식당</h3>
+                        <p class="text-gray-400 text-sm mt-1">달콤 짭짤한 전주식 소바</p>
+                    </div>
+                    <span class="text-2xl">❄️</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-snack" class="tab-content">
+            <div class="text-sm text-gray-500 mb-2 font-medium px-2">길거리 먹거리 투어</div>
+            
+            <div class="bg-white rounded-3xl p-5 mb-3 shadow-sm card-press cursor-pointer" onclick="openSheet('daurang')">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-bold">다우랑 만두</h3>
+                        <p class="text-gray-400 text-sm mt-1">새우가 통째로 들어간 수제만두</p>
+                    </div>
+                    <span class="text-2xl">🥟</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-5 mb-3 shadow-sm card-press cursor-pointer" onclick="openSheet('gilgeori')">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-bold">길거리야</h3>
+                        <p class="text-gray-400 text-sm mt-1">바삭한 바게트 버거 (살짝 매콤)</p>
+                    </div>
+                    <span class="text-2xl">🥖</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-tip" class="tab-content">
+            <div class="bg-blue-50 rounded-3xl p-6 mb-4">
+                <h3 class="text-blue-600 font-bold mb-3 text-lg">🚗 주차 꿀팁</h3>
+                <p class="text-gray-700 text-sm leading-relaxed">
+                    한옥마을 공영주차장을 이용하세요.<br>
+                    숙박 시 <b>50% 할인권</b>을 꼭 챙기셔야 합니다.
+                </p>
+            </div>
+            <div class="bg-white rounded-3xl p-6 shadow-sm">
+                <h3 class="font-bold mb-3 text-lg">⏰ 웨이팅 피하기</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">
+                    주말 점심은 11시 30분 이전에 방문하거나,<br>
+                    <b>'캐치테이블'</b> 앱으로 미리 줄서기를 하세요.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 left-0 right-0 px-6 max-w-md mx-auto z-40">
+        <button onclick="showToast()" class="w-full bg-toss-blue text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-blue-600 transition shadow-blue-200">
+            가족에게 공유하기
+        </button>
+    </div>
+
+    <div id="backdrop" class="bottom-sheet-backdrop" onclick="closeSheet()"></div>
+    <div id="sheet" class="bottom-sheet">
+        <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-6"></div> <h2 id="sheet-title" class="text-2xl font-bold mb-2"></h2>
+        <p id="sheet-desc" class="text-gray-500 mb-6"></p>
+        
+        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+            <div class="text-xs text-gray-500 font-bold mb-1">추천 메뉴</div>
+            <div id="sheet-menu" class="text-gray-800 font-medium"></div>
+        </div>
+
+        <div class="bg-blue-50 rounded-xl p-4 mb-6">
+            <div class="text-xs text-blue-500 font-bold mb-1">아이들을 위한 Tip</div>
+            <div id="sheet-tip" class="text-blue-700 text-sm font-medium"></div>
+        </div>
+
+        <button onclick="closeSheet()" class="w-full bg-gray-100 text-gray-600 py-4 rounded-xl font-bold">닫기</button>
+    </div>
+
+    <div id="toast" class="fixed top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-bold opacity-0 transition-opacity pointer-events-none z-50">
+        링크가 복사되었습니다! 🔗
+    </div>
+
+    <script>
+        // 데이터 정의
+        const data = {
+            'veteran': { title: "베테랑 칼국수", desc: "전주 한옥마을의 전설적인 맛집", menu: "칼국수, 쫄면, 만두", tip: "만두피가 얇아서 아이들이 정말 좋아해요!" },
+            'jinmi': { title: "진미식당", desc: "여름엔 소바, 겨울엔 온소바", menu: "메밀소바, 콩국수", tip: "육수가 달달해서 아이들 입맛 취향저격!" },
+            'daurang': { title: "다우랑", desc: "줄 서서 먹는 수제 만두집", menu: "새우만두, 부추만두", tip: "전자레인지가 있어서 따뜻하게 데워 먹여요." },
+            'gilgeori': { title: "길거리야", desc: "바삭바삭 바게트 버거", menu: "바게트 버거", tip: "청양고추가 들어가 매울 수 있으니 주의!" }
+        };
+
+        // 탭 전환 기능
+        function switchTab(tabName) {
+            // 버튼 스타일 초기화
+            document.querySelectorAll('header button').forEach(btn => {
+                btn.className = "px-4 py-2 rounded-full text-sm font-bold bg-gray-100 text-gray-500 transition-colors";
+            });
+            // 선택된 버튼 스타일 적용
+            document.getElementById('btn-' + tabName).className = "px-4 py-2 rounded-full text-sm font-bold bg-toss-blue text-white transition-colors";
+
+            // 탭 내용 숨기기
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            // 선택된 탭 내용 보이기
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // 바텀 시트 열기
+        function openSheet(key) {
+            const info = data[key];
+            document.getElementById('sheet-title').innerText = info.title;
+            document.getElementById('sheet-desc').innerText = info.desc;
+            document.getElementById('sheet-menu').innerText = info.menu;
+            document.getElementById('sheet-tip').innerText = info.tip;
+
+            document.getElementById('backdrop').classList.add('open');
+            document.getElementById('sheet').classList.add('open');
+        }
+
+        // 바텀 시트 닫기
+        function closeSheet() {
+            document.getElementById('backdrop').classList.remove('open');
+            document.getElementById('sheet').classList.remove('open');
+        }
+
+        // 토스트 메시지
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }
+    </script>
+</body>
+</html>
